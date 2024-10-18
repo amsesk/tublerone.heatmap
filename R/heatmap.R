@@ -1,5 +1,5 @@
-#' @importsFrom circlize colorRamp2
-#' @importsFrom ComplexHeatmap Heatmap
+#' @importFrom circlize colorRamp2
+#' @importFrom ComplexHeatmap Heatmap
 #' @param counts A matrix of counts with genes as rows and samples as columns.
 #' @param genes A character vector, or something coercible to one, of gene names to include in the heatmap. Default is to include all genes (rows) in the count matrix.
 make.HeatmapMaker <- function(object,
@@ -50,9 +50,9 @@ hm_size_and_position <- function(figure_width,
 }
 # %%
 
-#' @importsFrom circlize colorRamp2
-#' @importsFrom ComplexHeatmap Legend
-#' @imports magick
+#' @importFrom circlize colorRamp2
+#' @importFrom ComplexHeatmap Legend
+#' @import magick
 #' @export
 #' @param counts A matrix of counts with genes as rows and samples as columns.
 #' @param genes A character vector, or something coercible to one, of gene names to include in the heatmap. Default is to include all genes (rows) in the count matrix.

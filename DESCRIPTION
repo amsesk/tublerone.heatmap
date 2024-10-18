@@ -17,6 +17,6 @@ Depends:
     styler
 Remotes:
     bioc::release/ComplexHeatmap,
+    bioc::release/GenomicRanges
 Imports: 
-    GenomicRanges,
     tidyverse
