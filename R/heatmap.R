@@ -72,8 +72,8 @@ pretty_draw.HeatmapMaker <- function(object,
   legend <- Legend(col_fun = col, title = legend_title, title_gp = gpar(fontsize = 8), labels_gp = gpar(fontsize = 6))
   object@legends[["heatmap"]] <- legend
   hm_plt_params <- hm_size_and_position(
-    figure_width = unit(7.5, "in"),
-    figure_height = unit(5.0, "in"),
+    figure_height = figure_height,
+    figure_width = figure_width,
     row_names_max_width = unit(0, "in")
   )
   object@heatmap <- make(

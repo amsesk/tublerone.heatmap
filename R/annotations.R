@@ -1,4 +1,5 @@
-COLORS <- c("#855C75", "#D9AF6B", "#AF6458", "#736F4C", "#526A83", "#625377", "#68855C", "#9C9C5E", "#A06177", "#8C785D")
+
+COLORS <- c("#855C75", "#D9AF6B", "#AF6458", "#736F4C", "#526A83", "#625377", "#68855C", "#9C9C5E", "#A06177", "#8C785D", '#66c5cc', '#f6cf71', '#f89c74', '#dcb0f2', '#87c55f', '#9eb9f3', '#fe88b1', '#c9db74', '#8be0a4', '#b497e7')
 
 assign_colors <- function(df) {
   col <- list()
@@ -14,7 +15,15 @@ assign_colors <- function(df) {
   col
 }
 
-add_annotations.HeatmapMaker <- function(object, df, location = "bottom", titles = NULL, col = NULL) {
+add_annotations.HeatmapMaker <- function(object, df, location = "bottom", titles = NULL, col = NULL, height = unit(0.5, "in"), annotation_name_gp = gpar(fontsize=8)) {
+
+  # Turn everything into a factor to avoid a slew of errors later
+  for (column in colnames(df)) {
+    if (!is.factor(df[[column]])) {
+      df[[column]] = as.factor(df[[column]])
+    }
+  }
+
   if (is.null(titles)) {
     titles <- colnames(df)
     names(titles) <- titles
@@ -23,6 +32,7 @@ add_annotations.HeatmapMaker <- function(object, df, location = "bottom", titles
       stop("titles must be named list")
     }
   }
+
   if (is.null(col)) {
     col = assign_colors(df)
   } else {
@@ -33,8 +43,8 @@ add_annotations.HeatmapMaker <- function(object, df, location = "bottom", titles
   object@annotations[[location]] <- ComplexHeatmap::HeatmapAnnotation(
     df = df,
     show_legend = FALSE,
-    annotation_name_gp = gpar(fontsize = 8),
-    annotation_height = 0.5,
+    annotation_name_gp = annotation_name_gp,
+    height = height,
     col = col
   )
   object <- add_legends(object, df, col, titles)

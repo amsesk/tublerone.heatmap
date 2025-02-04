@@ -16,7 +16,9 @@ Depends:
     devtools,
     styler
 Remotes:
-    bioc::release/ComplexHeatmap,
     bioc::release/GenomicRanges
 Imports: 
     tidyverse
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
