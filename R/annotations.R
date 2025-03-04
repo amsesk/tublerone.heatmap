@@ -15,7 +15,13 @@ assign_colors <- function(df) {
   col
 }
 
-add_annotations.HeatmapMaker <- function(object, df, location = "bottom", titles = NULL, col = NULL, height = unit(0.5, "in"), annotation_name_gp = gpar(fontsize=8)) {
+add_simple_annotations.HeatmapMaker <- function(object, 
+                                         df, 
+                                         location = "bottom", 
+                                         titles = NULL, 
+                                         col = NULL, 
+                                         simple_anno_size=unit(0.1, "in"),
+                                         annotation_name_gp = gpar(fontsize=8)) {
 
   # Turn everything into a factor to avoid a slew of errors later
   for (column in colnames(df)) {
@@ -44,11 +50,34 @@ add_annotations.HeatmapMaker <- function(object, df, location = "bottom", titles
     df = df,
     show_legend = FALSE,
     annotation_name_gp = annotation_name_gp,
-    height = height,
+    simple_anno_size = simple_anno_size,
     col = col
   )
   object <- add_legends(object, df, col, titles)
 
   object
 }
+
 # %%
+add_jittered_rownames.HeatmapMaker <- function(object, 
+                                               to_label,
+                                               location = "right",
+                                               labels_gp = gpar(fontsize=4),
+                                               lines_gp = gpar(lwd=0.3)
+                                               ) {
+  if (any(!to_label %in% rownames(object@data))) {
+    mes = "Some provided feature names are not present in the rownames"
+    rlang::abort(mes)
+  }
+  label_pos = which(rownames(object@data) %in% to_label)
+
+  object@annotations[[location]] <- ComplexHeatmap::rowAnnotation(
+    feature = ComplexHeatmap::anno_mark(at = label_pos,
+                                        labels = to_label,
+                                        labels_gp = labels_gp,
+                                        lines_gp = lines_gp)
+    )
+  object
+}
+# %%
+
