@@ -58,9 +58,19 @@ align.HeatmapMaker <- function(object,
     column_names_max_height = unit(0.0,"in")
   }
 
-  row_annotation_extend = list(as.numeric(convertUnit(object@annotations[["bottom"]]@extended, "in")),
-                               as.numeric(convertUnit(object@annotations[["right"]]@anno_size, "in"))
-                               ) %>%
+  row_annotation_extend = list()
+  i = 1
+  for (side in c("top", "bottom")) {
+    if (!is.null(object@annotations[[side]])) {
+      row_annotation_extend[[i]] = as.numeric(convertUnit(object@annotations[[side]]@extended, "in")) 
+    }
+  }
+  for (side in c("left", "right")) {
+    if (!is.null(object@annotations[[side]])) {
+      row_annotation_extend[[i]] = as.numeric(convertUnit(object@annotations[[side]]@anno_size, "in")) 
+    }
+  }
+  row_annotation_extend = row_annotation_extend %>%
     unlist() %>%
     max() %>%
     unit("in")
@@ -117,23 +127,22 @@ align.HeatmapMaker <- function(object,
 }
 
 # %%
-draw.HeatmapMaker = function(object, ...) {
+draw.HeatmapMaker = function(object, col = circlize::colorRamp2(c(-2, 0, 2), c("blue", "white", "red")), ...) {
     hm <- object %>%
         make(
             scale = TRUE,
             width = object@align_params$width,
             height = object@align_params$height,
             gap=unit(0.00,"in"),
-            col = circlize::colorRamp2(c(-2, 0, 2), c("blue", "white", "red")),
-            show_row_names = FALSE,
-            show_column_names = FALSE,
+            col = col,
             row_dend_width=object@align_params$row_dend_width,
             column_dend_height=object@align_params$column_dend_height,
             row_names_max_width=object@align_params$row_names_max_width,
             column_names_max_height=object@align_params$column_names_max_height,
             row_dend_gp=gpar(lwd=0.3),
             column_dend_gp=gpar(lwd=0.3),
-            show_heatmap_legend= FALSE
+            show_heatmap_legend= FALSE,
+            ...
         )
   ComplexHeatmap::draw(hm, padding = object@align_params$padding)
 }
