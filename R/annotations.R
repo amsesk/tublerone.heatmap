@@ -1,5 +1,5 @@
 
-COLORS <- c("#855C75", "#D9AF6B", "#AF6458", "#736F4C", "#526A83", "#625377", "#68855C", "#9C9C5E", "#A06177", "#8C785D", '#66c5cc', '#f6cf71', '#f89c74', '#dcb0f2', '#87c55f', '#9eb9f3', '#fe88b1', '#c9db74', '#8be0a4', '#b497e7')
+HEATMAP_MAKER_DEFAULT_QUALITATIVE_COLORS <- c("#855C75", "#D9AF6B", "#AF6458", "#736F4C", "#526A83", "#625377", "#68855C", "#9C9C5E", "#A06177", "#8C785D", '#66c5cc', '#f6cf71', '#f89c74', '#dcb0f2', '#87c55f', '#9eb9f3', '#fe88b1', '#c9db74', '#8be0a4', '#b497e7')
 
 assign_colors <- function(df) {
   col <- list()
@@ -7,7 +7,7 @@ assign_colors <- function(df) {
   for (column in colnames(df)) {
     values <- levels(df[, column])
     idx <- i:(i + length(values) - 1)
-    these <- COLORS[idx]
+    these <- HEATMAP_MAKER_DEFAULT_QUALITATIVE_COLORS[idx]
     names(these) <- values
     col[[column]] <- these
     i <- i + length(values)
@@ -21,7 +21,9 @@ add_simple_annotations.HeatmapMaker <- function(object,
                                          titles = NULL, 
                                          col = NULL, 
                                          simple_anno_size=unit(0.1, "in"),
-                                         annotation_name_gp = gpar(fontsize=8)) {
+                                         annotation_name_gp = gpar(fontsize=8),
+                                         ...
+  ) {
 
   # Turn everything into a factor to avoid a slew of errors later
   for (column in colnames(df)) {
@@ -51,9 +53,12 @@ add_simple_annotations.HeatmapMaker <- function(object,
     show_legend = FALSE,
     annotation_name_gp = annotation_name_gp,
     simple_anno_size = simple_anno_size,
-    col = col
+    col = col,
+    ...
   )
-  object <- add_legends(object, df, col, titles)
+  df[["location"]] = location
+  object@annotation_data = rbind(object@annotation_data, df)
+  # object <- add_legends(object, df, col, titles)
 
   object
 }

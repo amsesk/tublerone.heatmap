@@ -37,6 +37,21 @@ setMethod(
   function(object, df, ...) add_legends.HeatmapMaker(object, df, ...)
 )
 
+# %% Method for making legends based on the annotation data that has already been added
+setGeneric("make_annotation_legends", function(object, col, ...) standardGeneric("make_annotation_legends"))
+setMethod(
+  "make_annotation_legends",
+  signature("HeatmapMaker", col="list"),
+  function(object, col, ...) make_annotation_legends.HeatmapMaker(object, col, ...)
+)
+# %% Method for making a legend for the heatmap 
+setGeneric("make_heatmap_legend", function(object, title, col, ...) standardGeneric("make_heatmap_legend"))
+setMethod(
+  "make_heatmap_legend",
+  signature("HeatmapMaker", title="character", col="function"),
+  function(object, title, col, ...) make_heatmap_legend.HeatmapMaker(object, title, col, ...)
+)
+
 # %% Method for adding annotations
 setGeneric("make", function(object, ...) standardGeneric("make"))
 setMethod(
@@ -54,7 +69,6 @@ setMethod(
 )
 
 # %% Draw an aligned annotated heatmap without legends
-setGeneric("draw", function(object, ...) standardGeneric("draw"))
 setMethod(
   "draw",
   signature("HeatmapMaker"),
