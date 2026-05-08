@@ -1,19 +1,42 @@
+library(ComplexHeatmap)
+setClassUnion("HeatmapOrNull", c("Heatmap", "NULL"))
+setClassUnion("FunctionOrNull", c("function", "NULL"))
+
 setClass(
   "HeatmapMaker",
   representation(
     data = "matrix",
-    heatmap = "Heatmap",
+    heatmap_palette = "FunctionOrNull",
+    annotation_palettes = "list",
+    annotation_data = "list",
     annotations = "list",
-    annotation_data = "data.frame",
     legends = "list",
-    align_params = "list"
+    heatmaps = "list"
   )
 )
 
-
 # %%
-HeatmapMaker <- function(data, annotations = list(), annotation_data = data.frame(), legends = list(), align_params = list()) {
-  new("HeatmapMaker", data = data, heatmap = Heatmap(data), annotations = annotations, annotation_data = annotation_data, legends = legends, align_params = align_params)
+HeatmapMaker <- function(data,
+                         heatmap_palette = NULL,
+                         row_annotation_data = data.frame(),
+                         column_annotation_data = data.frame(),
+                         # annotation_data = list(rows=data.frame(), columns=data.frame()),
+                         annotation_palettes = list()
+                         ) {
+  new("HeatmapMaker", 
+    data = data, 
+    heatmap_palette=heatmap_palette,
+    annotation_palettes=annotation_palettes,
+    annotation_data = list(row=row_annotation_data, column=column_annotation_data),
+    annotations = list(
+      # top=new("HeatmapAnnotation"),
+      # right=new("HeatmapAnnotation"),
+      # bottom=new("HeatmapAnnotation"),
+      # left=new("HeatmapAnnotation")
+    ),
+    legends = list(),
+    heatmaps = list()
+  )
 }
 # %%
 

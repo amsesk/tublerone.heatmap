@@ -14,54 +14,103 @@ assign_colors <- function(df) {
   }
   col
 }
+annot_loc_to_axis = list(
+  top="column",
+  right="row",
+  bottom="column",
+  left="row"
+  )
 
 add_simple_annotations.HeatmapMaker <- function(object, 
-                                         df, 
-                                         location = "bottom", 
-                                         titles = NULL, 
-                                         col = NULL, 
-                                         simple_anno_size=unit(0.1, "in"),
-                                         annotation_name_gp = gpar(fontsize=8),
-                                         ...
+                                                vars,
+                                                location = "bottom", 
+                                                titles = NULL, 
+                                                col = NULL, 
+                                                annotation_name_gp = gpar(fontsize=8),
+                                                ...
   ) {
+  rlang::inform(glue::glue("Annotation location: {location}"))
+  axis = annot_loc_to_axis[[location]]
+  rlang::inform(glue::glue("Annotation axis: {axis}"))
+  axis_annot_df = object@annotation_data[[axis]]
 
-  # Turn everything into a factor to avoid a slew of errors later
-  for (column in colnames(df)) {
-    if (!is.factor(df[[column]])) {
-      df[[column]] = as.factor(df[[column]])
+  # Make sure that the columns exist in the axis' annotation data and have an associated palette available
+  for (.v in vars) {
+    if (! .v %in% colnames(axis_annot_df)) {
+      rlang::abort(glue::glue("`{.v}` missing from `{axis}` annotation data"))
+    }
+    if (! .v %in% names(object@annotation_palettes)) {
+      rlang::abort(glue::glue("`{.v}` does not have an associated palette available"))
     }
   }
+  axis_annot_df = axis_annot_df[,vars, drop=FALSE]
+  pals = object@annotation_palettes[vars]
+  print(pals)
 
-  if (is.null(titles)) {
-    titles <- colnames(df)
-    names(titles) <- titles
-  } else {
-    if (is.null(names(titles))) {
-      stop("titles must be named list")
-    }
-  }
-
-  if (is.null(col)) {
-    col = assign_colors(df)
-  } else {
-    if (is.null(names(col))) {
-      stop("col must be a list of named vectors")
-    }
-  }
   object@annotations[[location]] <- ComplexHeatmap::HeatmapAnnotation(
-    df = df,
+    df = axis_annot_df,
     show_legend = FALSE,
+    which = axis,
     annotation_name_gp = annotation_name_gp,
-    simple_anno_size = simple_anno_size,
-    col = col,
+    col = pals,
     ...
   )
-  df[["location"]] = location
-  object@annotation_data = rbind(object@annotation_data, df)
-  # object <- add_legends(object, df, col, titles)
+  object <- add_legends(
+    object=object,
+    df=axis_annot_df,
+    col=pals,
+    titles=titles)
 
   object
 }
+
+# add_simple_annotations.HeatmapMaker <- function(object, 
+#                                          df, 
+#                                          location = "bottom", 
+#                                          titles = NULL, 
+#                                          col = NULL, 
+#                                          simple_anno_size=unit(0.1, "in"),
+#                                          annotation_name_gp = gpar(fontsize=8),
+#                                          ...
+#   ) {
+#
+#   # Turn everything into a factor to avoid a slew of errors later
+#   for (column in colnames(df)) {
+#     if (!is.factor(df[[column]])) {
+#       df[[column]] = as.factor(df[[column]])
+#     }
+#   }
+#
+#   if (is.null(titles)) {
+#     titles <- colnames(df)
+#     names(titles) <- titles
+#   } else {
+#     if (is.null(names(titles))) {
+#       stop("titles must be named list")
+#     }
+#   }
+#
+#   if (is.null(col)) {
+#     col = assign_colors(df)
+#   } else {
+#     if (is.null(names(col))) {
+#       stop("col must be a list of named vectors")
+#     }
+#   }
+#   object@annotations[[location]] <- ComplexHeatmap::HeatmapAnnotation(
+#     df = df,
+#     show_legend = FALSE,
+#     annotation_name_gp = annotation_name_gp,
+#     simple_anno_size = simple_anno_size,
+#     col = col,
+#     ...
+#   )
+#   df[["location"]] = location
+#   # object@annotation_data = rbind(object@annotation_data, df)
+#   # object <- add_legends(object, df, col, titles)
+#
+#   object
+# }
 
 # %%
 add_jittered_rownames.HeatmapMaker <- function(object, 

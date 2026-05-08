@@ -1,9 +1,9 @@
 # %% Method for making legends for factor data
-setGeneric("add_simple_annotations", function(object, df, ...) standardGeneric("add_simple_annotations"))
+setGeneric("add_simple_annotations", function(object, ...) standardGeneric("add_simple_annotations"))
 setMethod(
   "add_simple_annotations",
-  signature("HeatmapMaker", "data.frame"),
-  function(object, df, ...) add_simple_annotations.HeatmapMaker(object, df, ...)
+  signature("HeatmapMaker"),
+  function(object, ...) add_simple_annotations.HeatmapMaker(object, ...)
 )
 
 # %% Method to subset the HeatmapMaker object by feature
@@ -81,6 +81,19 @@ setMethod(
   "align",
   signature("HeatmapMaker"),
   function(object, ...) align.HeatmapMaker(object, ...)
+)
+
+# %% Generate the alignment parameters for plotting a heatmap, not including legends
+setGeneric("align2", function(object, ...) standardGeneric("align2"))
+setMethod(
+  "align2",
+  signature("HeatmapMaker"),
+  function(object, ...) align2.HeatmapMaker(object, ...)
+)
+setMethod(
+  "align2",
+  signature("HeatmapList"),
+  function(object, ...) align2.HeatmapList(object, ...)
 )
 
 # %%
